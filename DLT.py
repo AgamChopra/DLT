@@ -1,5 +1,4 @@
 # Author: Agamdeep S. Chopra, 02/09/2022
-# Partner code shared with: Pranshu Savani
 from matplotlib import pyplot as plt
 from PIL import Image
 import numpy as np
