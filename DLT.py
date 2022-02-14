@@ -33,7 +33,10 @@ def compute_H(A):
 
 
 def denorm_H(H, T, T_):
-    return np.linalg.inv(T_) @ H @ T
+    
+    H_ = np.linalg.inv(T_) @ H @ T
+    
+    return H_
 
 
 def DLT(X, X_, h=980, w=500, h_=366, w_=488):
@@ -66,7 +69,7 @@ def cords_warp(i_max, j_max, H, w=1):
         for j in range(j_max):
             x = np.array([i, j, w])
             x_ = H @ x
-            x_ = x_ / x_[2] # Project transformed coordinates back to orignal image plane.
+            x_ = (x_ / x_[2]) * w # Project transformed coordinates back to orignal image plane.
             warped_coords.append(x_)
 
     Bmap = np.reshape(np.array(warped_coords), (i_max, j_max, 3))[:, :, :-1]
@@ -101,8 +104,7 @@ def biliniar_interpolation_back(Bmap, image):
 
 def main():
     
-    im = Image.open(
-        "R:/classes 2020-22/Spring 2022/CS 532 3D CV/HW1/basketball-court.ppm")
+    im = Image.open("basketball-court.ppm") #Image.open("basketball-court.png")
     #im.show()
     img = np.asarray(im)    
     plt.imshow(img)
@@ -127,7 +129,7 @@ def main():
     H = DLT(X, X_, h, w, h_, w_)
     
     # Calculate the Backward mapping.    
-    Bmap = alpha * np.abs(cords_warp(w, h, H, z))
+    Bmap = alpha * cords_warp(w, h, H, z)
     
     # Apply Backward interpolation using the Backward map to obtain the warped image.
     img_ = biliniar_interpolation_back(Bmap, img)
@@ -137,7 +139,7 @@ def main():
     
     im_ = Image.fromarray(img_.astype('uint8'), 'RGB')
     im_.show()
-    #im_.save("R:/classes 2020-22/Spring 2022/CS 532 3D CV/HW1/basketball-court-warped.ppm")
+    #im_.save("basketball-court-warped.ppm") #im_.save("basketball-court-warped.png")
     
 if __name__ == '__main__':
     main()
