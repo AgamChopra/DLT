@@ -80,9 +80,8 @@ def cords_warp(i_max, j_max, H, w=1):
 # interpolation
 
 def biliniar_interpolation_back(Bmap, image):
-    
     # create a blank canvas. out of frame pixel locations of the source image will be rendered as R,G,B = 0,0,0.
-    warped_image = np.zeros((Bmap.shape[0], Bmap.shape[1], 3)) 
+    warped_image = np.zeros((Bmap.shape[0], Bmap.shape[1], image.shape[2])) 
     
     # bilinear interp. logic. Not the most efficient but it works 😊
     for i in range(Bmap.shape[0]):
@@ -91,15 +90,10 @@ def biliniar_interpolation_back(Bmap, image):
             x, y = int(Bmap[i, j, 0]), int(Bmap[i, j, 1])
 
             if x > 0 and y > 0 and x < image.shape[0]-1 and y < image.shape[1]-1:
-
-                d1, d2, d3, d4 = np.sqrt(2) - np.linalg.norm(np.array([x, y])-Bmap[i, j]), np.sqrt(
-                    2) - np.linalg.norm(np.array([x, y+1])-Bmap[i, j]), np.sqrt(
-                    2) - np.linalg.norm(np.array([x+1, y])-Bmap[i, j]), np.sqrt(
-                    2) - np.linalg.norm(np.array([x+1, y+1])-Bmap[i, j])
-                warped_image[i, j] = (d1*image[x, y] + d2*image[x, y+1] + d3*image[
-                    x+1, y] + d4*image[x+1, y+1])/(d1+d2+d3+d4)
-
-    return warped_image.astype('int32') # image has to be a discrete integer value.
+                a, b = Bmap[i, j, 0] - x, Bmap[i, j, 1] - y
+                warped_image[i, j] = (1-a)*(1-b)*image[x,y] + (1-a)*(b)*image[x, y+1] + (a)*(1-b)*image[x+1, y] + (a)*(b)*image[x+1, y+1]
+                    
+    return warped_image.astype('int32')
 
 
 def main():
