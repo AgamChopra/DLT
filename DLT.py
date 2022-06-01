@@ -132,8 +132,10 @@ def main():
     plt.show()
     
     im_ = Image.fromarray(img_.astype('uint8'), 'RGB')
+    
     im_.show()
-    #im_.save("basketball-court-warped.ppm") #im_.save("basketball-court-warped.png")
+    im_.save("basketball-court-warped.ppm") 
+    im_.save("basketball-court-warped.png")
     
 if __name__ == '__main__':
     main()
