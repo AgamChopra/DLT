@@ -3,8 +3,8 @@ from matplotlib import pyplot as plt
 from PIL import Image
 import numpy as np
 
-# DLT
 
+# DLT
 def compute_A(X, X_):
 
     A_list = []
@@ -78,12 +78,11 @@ def cords_warp(i_max, j_max, H, w=1):
 
 
 # interpolation
-
 def biliniar_interpolation_back(Bmap, image):
     # create a blank canvas. out of frame pixel locations of the source image will be rendered as R,G,B = 0,0,0.
     warped_image = np.zeros((Bmap.shape[0], Bmap.shape[1], image.shape[2])) 
     
-    # bilinear interp. logic. Not the most efficient but it works 😊
+    # bilinear interp. logic.
     for i in range(Bmap.shape[0]):
         for j in range(Bmap.shape[1]):
 
@@ -96,10 +95,30 @@ def biliniar_interpolation_back(Bmap, image):
     return warped_image.astype('int32')
 
 
-def main():
-    
-    im = Image.open("basketball-court.ppm") #Image.open("basketball-court.png")
+def main(img_path="C:/Users/user/Desktop/example.jpg",out_path="C:/Users/user/Desktop/warped",coords=[250, 80, 250, 350, 530, 204, 536, 284]):
+    '''
+    Parameters
+    ----------
+    img_path : str, optional
+        input path, see example. The default is "C:/Users/user/Desktop/example.jpg".
+    out_path : str, optional
+        output path, see example. The default is "C:/Users/user/Desktop/warped".
+    coords : list, optional
+        List of coordinates starting from top left pt1(y1,x1), 
+        top right pt2(y2,x2), bottom left pt3(y3,x3), 
+        bottom right pt4(y4,x4). Use software such as GIMP to 
+        pinpoint coordinates of points.(Note: by default gimp will 
+        give coordinates as x:y but this code uses y:x)
+        The default is [250, 80, 250, 350, 530, 204, 536, 284].
+
+    Returns
+    -------
+    None.
+
+    '''
+    im = Image.open(img_path)
     #im.show()
+    
     img = np.asarray(im)    
     plt.imshow(img)
     plt.show()
@@ -112,12 +131,12 @@ def main():
     
     # Coordinates of landmarks on the known unwarped image. Since we're performing backward warping,
     # this will be the target image that we want to warp our blank new image to.
-    X_ = np.array([[54, 248, z], [74, 404, z], [194, 23, z], [280, 280, z]])
-    w_, h_ = 366, 488
+    X_ = np.array([[coords[0], coords[1], z], [coords[2], coords[3], z], [coords[4], coords[5], z], [coords[6], coords[7], z]])
+    w_, h_ = 894,655
     
     # Corrosponding coordinates of the landmarks in the new blank image.
-    X = np.array([[0, 0, z], [0, 499, z], [979, 0, z], [979, 499, z]])
-    w, h =  980, 500
+    X = np.array([[0, 0, z], [0, 499, z], [499, 0, z], [499, 499, z]])
+    w, h =  500, 500
     
     # Calculate H using the DLT algorithm.
     H = DLT(X, X_, h, w, h_, w_)
@@ -133,9 +152,9 @@ def main():
     
     im_ = Image.fromarray(img_.astype('uint8'), 'RGB')
     
-    im_.show()
-    im_.save("basketball-court-warped.ppm") 
-    im_.save("basketball-court-warped.png")
+    im_.show() 
+    im_.save(out_path+".jpg") #im_.save(out_path + ".ppm")
+    
     
 if __name__ == '__main__':
     main()
