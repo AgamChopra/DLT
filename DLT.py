@@ -95,7 +95,7 @@ def biliniar_interpolation_back(Bmap, image):
     return warped_image.astype('int32')
 
 
-def main(img_path="C:/Users/user/Desktop/example.jpg",out_path="C:/Users/user/Desktop/warped",coords=[250, 80, 250, 350, 530, 204, 536, 284]):
+def main(img_path,out_path,coords=[250, 80, 250, 350, 530, 204, 536, 284],hw=[500,500]):
     '''
     Parameters
     ----------
@@ -136,7 +136,7 @@ def main(img_path="C:/Users/user/Desktop/example.jpg",out_path="C:/Users/user/De
     
     # Corrosponding coordinates of the landmarks in the new blank image.
     X = np.array([[0, 0, z], [0, 499, z], [499, 0, z], [499, 499, z]])
-    w, h =  500, 500
+    w, h =  hw[0], hw[1]
     
     # Calculate H using the DLT algorithm.
     H = DLT(X, X_, h, w, h_, w_)
@@ -153,8 +153,8 @@ def main(img_path="C:/Users/user/Desktop/example.jpg",out_path="C:/Users/user/De
     im_ = Image.fromarray(img_.astype('uint8'), 'RGB')
     
     im_.show() 
-    im_.save(out_path+".jpg") #im_.save(out_path + ".ppm")
+    im_.save(out_path) #im_.save(out_path + ".ppm")
     
     
 if __name__ == '__main__':
-    main()
+    main('/home/agam/Downloads/ringi.jpeg','/home/agam/Downloads/pingi.jpg',[0,200,20,580,800,100,820,500],[500,500])
